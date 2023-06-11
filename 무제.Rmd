@@ -1,0 +1,33 @@
+---
+title: "증권데이터분석"
+output: html_document
+date: "2023-06-11"
+---
+## 증권데이터 분석
+
+
+```{r setup }
+knitr::opts_chunk$set(echo = F,include = T)
+library(rvest)
+library(tidyverse)
+library(ggplot2)
+library(jsonlite)
+
+# 크롤링할 웹 페이지 주소
+url <-"https://finance.naver.com/sise/sise_group_detail.naver?type=upjong&no=273"
+# HTML 페이지 파싱
+page <- read_html(url, encoding="euc-kr")
+
+# 테이블 데이터 추출
+table <- page %>% html_nodes("table")%>% html_table()
+
+# 필요한 테이블 선택
+target_table <- table[[3]]
+
+# 데이터 프레임에서 결측치가 있는 열 제거
+clean_data <- target_table[, colSums(is.na(target_table)) == 0]
+data<-clean_data[c(-1,-11,-12),]
+data
+```
+
+이 데이터를 보면 값이 0인 데이터가 존재하고 있는데 
